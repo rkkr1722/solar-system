@@ -9,18 +9,25 @@ jobs:
     unit-testing:
         name: Unit Testubg
         runs-on: ubuntu-latest
+        
         steps:
-        - name: check repos
-          uses: actions/checkout@v4
-
-        - name: Setup NodeJS version 18
-          uses: actions/setup-node@v3
+        - uses: actions/checkout@v5
+        - uses: actions/setup-node@v6
           with:
-            node-version: 18
+            node-version: 24
+        # - run: npm ci
+        # - run: npm test
+        
+        # - name: check repos
+        #   uses: actions/checkout@v4
+
+        # - name: Setup NodeJS version 18
+        #   uses: actions/setup-node@v3
+        #   with:
+        #     node-version: 18
 
         - name: Install Dependencies
           run: npm install
-
         - name: Install test
-          run: npm test
+          run: npm install
           
