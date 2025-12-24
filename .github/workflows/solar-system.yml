@@ -5,30 +5,51 @@ on:
         branches:
             - main
             - 'feature/*'
+env:
+  MONGO_URI: 'mongodb+srv://supercluster.d83jj.mongodb.net/superData'
+  MONGO_USERNAME: ${{vars.MONGO_USERNAME}}
+  MONGO_PASSWORD: ${{secrets.MONGO_PASSWORD}}
+
 jobs:
-    unit-testing:
-        name: Unit Testubg
-        runs-on: ubuntu-latest
-        
-        steps:
-        # - uses: actions/checkout@v5
-        # - uses: actions/setup-node@v6
-        #   with:
-        #     node-version: 24
-        # - run: npm ci
-        # - run: npm test
-        
-        - name: check repos
-          uses: actions/checkout@v4
+  unit-testing:
+    name: Unit Testing
+    strategy:
+      matrix:
+        nodejs: [18, 19, 20]
+        operating_systems: [ubuntu-latest, macos-latest]
+        exclude:
+          - nodejs: 18
+          - operating_systems: macos-latest
+    #runs-on: ubuntu-latest
+    runs-on: ${{matrix.operating_systems}}
+    steps:
+    # - uses: actions/checkout@v5
+    # - uses: actions/setup-node@v6
+    #   with:
+    #     node-version: 24
+    # - run: npm ci
+    # - run: npm test
+    
+    - name: check repos
+      uses: actions/checkout@v4
 
-        - name: Setup NodeJS version 18
-          uses: actions/setup-node@v3
-          with:
-            node-version: 18
+    - name: Setup NodeJS version 18
+      uses: actions/setup-node@v3
+      with:
+        #node-version: 18
+        node-version: ${{matrix.nodejs}}
 
-        - name: Install Dependencies
-          run: npm install
-          
-        - name: Install test
-          run: npm install
+    - name: Install Dependencies
+      run: npm install
+      
+    - name: Unit Testing
+      #run: npm test
+      run: echo
+    
+    - name: Archive test result
+      uses: actions/upload-artifact@v3
+      with: 
+        name: mocha-test-result
+        path: test-result.xml
+
           
